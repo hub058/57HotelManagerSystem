@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dao.AcountMapper">
+	<!-- 使用namespace命名空间和id可以唯一的确定一个SQL语句 -->
+	
+	
+	
+
+	<resultMap type="livein" id="liveinResult">
+		<result property="account" column="account" />
+		<result property="foregift" column="foregift" />
+	</resultMap>
+	
+	<resultMap type="account" id="accountResult">
+		<id property="chkID" column="chkID" />
+		<result property="inno" column="inno" />
+		<result property="chktime" column="chktime" />
+		<result property="userID" column="userID" />
+		<result property="delmark" column="delmark" />
+		<result property="breakdownAccount" column="breakdownAccount" />
+		<result property="money" column="money" />
+		<result property="moneycount" column="moneycount" />
+		<result property="updateTime" column="updateTime" />
+		<collection property="livein" ofType="livein"
+			resultMap="liveinResult">
+		</collection>
+	</resultMap>
+	
+		<!-- 查询 -->
+	<select id="getAcount" resultType="Account">
+	        SELECT * FROM account
+	<where>
+	   <if test="userID != null and userID !='' ">
+	      and userID=#{userID}
+	    </if>
+	     <if test="chktime != null and chktime !='' ">
+	      and chktime=#{chktime}
+	    </if>
+	     <if test="inno != null and inno !='' ">
+	      and inno=#{inno}
+	    </if>
+	     <if test="chkID != null and chkID !='' ">
+	      and chkID=#{chkID}
+	    </if>
+	</where>
+	   order by chktime DESC limit #{from},#{pageSize}
+	</select>
+	
+	<select id="getCount" resultType="Integer">
+	   SELECT COUNT(1) FROM account
+	<where>
+	   <if test="userID != null and userID !='' ">
+	      and userID=#{userID}
+	    </if>
+	     <if test="chktime != null and chktime !='' ">
+	      and chktime=#{chktime}
+	    </if>
+	     <if test="inno != null and inno !='' ">
+	      and inno=#{inno}
+	    </if>
+	     <if test="chkID != null and chkID !='' ">
+	      and chkID=#{chkID}
+	    </if>
+	</where>
+	</select>
+	
+	<insert id="accountAdd" parameterType="Account">
+	  INSERT INTO account 
+	  (chkID,inno,chktime,userID,delmark,breakdownAccount,money,moneycount)
+	   VALUES (#{chkID},#{inno},#{chktime},#{userID},#{delmark},#{breakdownAccount},#{money},#{moneycount})
+	</insert>
+	
+	<delete id="deleteAccount">
+	DELETE FROM account WHERE chkID=#{chkID}
+	
+	</delete>
+	<update id="updateAcout" parameterType="Account">
+	UPDATE account 
+	<set>
+	<if test="updateTime!=null"> updateTime=#{updateTime},</if>
+	<if test="delmark!=null">delmark=#{delmark},</if>
+	<if test="breakdownAccount!=null">breakdownAccount=#{breakdownAccount},</if>
+	<if test="money!=null">money=#{money},</if>
+	<if test="moneycount!=null">moneycount=#{moneycount},</if>
+	</set>
+    WHERE chkID=#{chkID}
+	</update>
+	<select id="getAcounts" resultMap="accountResult">
+	  SELECT l.account,l.foregift,a.* FROM livein l,account a WHERE a.chkID=#{chkID}
+	</select>
+	<select id="getDateCount" resultType="Integer">
+	SELECT  SUM(moneycount)  FROM account  WHERE  DATE(chktime)
+	</select>
+</mapper>

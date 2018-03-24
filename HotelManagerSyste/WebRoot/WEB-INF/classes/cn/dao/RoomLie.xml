@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dao.RoomLie">
+	<!-- 使用namespace命名空间和id可以唯一的确定一个SQL语句 -->
+
+	<!-- 查询房间类型 -->
+	<select id="RoomMold" resultType="Roomtype">
+		SELECT * FROM roomtype
+	</select>
+	<!-- 查询房间押金 -->
+	<select id="roomGold" resultType="Roomtype">
+		SELECT roomPrice FROM roomtype
+		WHERE roomTypeID =#{roomTypeId};
+	</select>
+
+	<!-- 查询房间类型 -->
+	<select id="Roomlx" resultType="Roominfo">
+		SELECT roomTypeID FROM roominfo
+		WHERE roomID=#{roomlx}
+	</select>
+
+	<!-- 预定一个房间 -->
+	<insert id="RoomOrder">
+		INSERT INTO engage
+		(cID,cname,ctels,roomID,intime,demand,leavetime,foregift)
+		VALUES
+		(#{cID},#{cname},#{ctels},#{roomID},#{intime},#{demand},#{leavetime},#{foregift})
+	</insert>
+
+	<!-- 空房 (修改) -->
+	<select id="RentRoom" resultMap="roomInfoTypeResult">
+		
+		SELECT t.id,t.roomPrice,f.roomID  FROM  roominfo f,roomtype t
+		<where>
+		 and t.roomTypeID=f.roomTypeID
+			AND f.roomState='干净的空房'
+			<if test="roomTypeId !=null and roomTypeId !=''">
+				AND f.roomTypeID =#{roomTypeId}
+			</if>
+			
+		</where>
+	</select>
+
+	<!-- 所有房间 -->
+	<select id="RoomAll" resultMap="roomInfoTypeResult">
+		SELECT t.id AS t_id,
+		t.roomTypeName,t.roomPrice,t.foregift,r.* FROM
+		roominfo
+		r,roomtype t
+		<where>
+		 r.roomTypeID=t.roomTypeID 
+		
+		 </where>
+	</select>
+	<!-- 查询房间总数 -->
+	<select id="sumSelect" resultType="int">
+	SELECT COUNT(id) FROM roominfo
+	</select>
+	<!-- 房间细节 -->
+	<select id="DetailRoom" resultType="Roominfo">
+		SELECT r.*,t.* FROM roominfo
+		r,roomtype t
+		WHERE r.roomTypeID=t.roomTypeID AND r.id=#{id}
+	</select>
+
+	<!-- 推荐 房间 -->
+	<select id="limitRoom" resultMap="roomInfoTypeResult">
+		SELECT rf.*,rt.* FROM roominfo rf,roomtype rt WHERE rt.roomTypeID =rf.roomTypeID LIMIT 6
+	</select>
+
+	<!-- 最近房间 -->
+	<select id="roomRecently" resultMap="roomInfoTypeResult">
+	SELECT t.*,i.*,t.id as t_id FROM roomtype t,roominfo i WHERE t.roomTypeID =i.roomTypeID  ORDER BY i.roomTime DESC LIMIT 6 
+	</select>
+	
+	<resultMap type="roomtype" id="roomtypeResult">
+		<id property="id" column="t_id" />
+		<result property="roomTypeName" column="roomTypeName" />
+		<result property="roomPrice" column="roomPrice" />
+		<result property="foregift" column="foregift" />
+	</resultMap>
+	
+	<resultMap type="roominfo" id="roomInfoTypeResult">
+		<id property="id" column="id" />
+		<result property="roomID" column="roomID" />
+		<result property="roomTypeID" column="roomTypeID" />
+		<result property="roomState" column="roomState" />
+		<result property="roomTel" column="roomTel" />
+		<result property="roomLoc" column="roomLoc" />
+		<result property="remark" column="remark" />
+		<result property="delmark" column="delmark" />
+		<result property="roomTime" column="roomTime" />
+		<result property="roomImg" column="roomImg" />
+		<result property="roomImgBoth" column="roomImgBoth" />
+
+		<collection property="roomtype" ofType="roomtype"
+			resultMap="roomtypeResult">
+		</collection>
+	</resultMap>
+	<!-- 房间查询 -->
+	<select id="referRoom" resultMap="roomInfoTypeResult">
+		SELECT t.id AS t_id, t.roomTypeName,t.roomPrice,t.foregift,r.* FROM
+		roominfo
+		r,roomtype t
+		<where>
+			AND r.roomTypeID=t.roomTypeID
+			<if test="roomTypeID != null and  roomTypeID != '' ">
+				AND r.roomTypeID =#{roomTypeID}
+			</if>
+			<if test="roomID != null and roomID !=''">
+				AND r.roomID=#{roomID}
+			</if>
+			LIMIT 1
+		</where>
+	</select>
+	<!-- 去预定 -->
+	<select id="qvyuding" resultType="int">
+	SELECT COUNT(*) FROM roominfo WHERE roomID = #{roomID} AND roomState='预订'
+	</select>
+	<!-- 修改房间状态 -->
+	<update id="alterRoom" >
+	UPDATE	roominfo SET roomState='预订' WHERE roomID=#{roomID}
+	</update>
+</mapper>

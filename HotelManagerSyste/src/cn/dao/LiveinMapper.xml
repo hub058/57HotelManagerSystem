@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dao.LiveinMapper">
+	<!-- 使用namespace命名空间和id可以唯一的确定一个SQL语句 -->
+	
+	<select id="getLiveinList" resultType="Livein">
+	    SELECT *,(SELECT leveinTypeName FROM leveintype te WHERE te.leveintype=l.leveinTypeID) AS leveinTypeName FROM livein l
+	   <where>
+	      <if test="leveinTypeID !=null and leveinTypeID!='' ">
+	          and leveinTypeID= #{leveinTypeID}
+ 	       </if>
+	       <if test="inno !=null and inno !='' ">
+	           and inno like  CONCAT('%',#{inno},'%')
+	       </if>
+	       <if test="roomID !=null and roomID!='' ">
+	           and roomID like CONCAT('%',#{roomID},'%')
+	       </if>
+	       <if test="cID !=null and cID!='' ">
+	          and cID like CONCAT('%',#{cID},'%')
+ 	       </if>
+ 	    
+	   </where>
+	    order by l.id DESC limit #{from},#{pageSize}
+	</select>
+	<!-- 总数 -->
+	<select id="liveinCount" resultType="Integer">
+	    SELECT COUNT(1) FROM livein 
+	<where>
+	       <if test="leveinTypeID !=null and leveinTypeID!='' ">
+	          and leveinTypeID= #{leveinTypeID}
+ 	       </if>
+	        <if test="inno !=null and inno !='' ">
+	           and inno like CONCAT('%',#{inno},'%')
+	       </if>
+	        <if test="roomID !=null and roomID!='' ">
+	           and roomID like CONCAT('%',#{roomID},'%')
+	       </if>
+	       <if test="cID !=null and cID!='' ">
+	          and cID like CONCAT('%',#{cID},'%')
+ 	       </if>
+	</where>
+	</select>
+	
+	
+		<!-- 查询 -->
+	<select id="getLivein" resultType="Livein">
+	          select * from livein
+	<where>
+	   <if test="id != null and id !='' ">
+	      and id=#{id}
+	    </if>
+	</where>
+	
+	</select>
+	
+	<insert id="liveinadd" parameterType="Livein">
+	     
+	    INSERT INTO livein 
+	    (inno,roomID,cID,cname,csex,zjtype,zjno,addr,renshu,intime,leavetime,delmark,ctel,foregift,days,account,leveinTypeID)
+ VALUES (#{inno},#{roomID},#{cID},#{cname},#{csex},#{zjtype},#{zjno},#{addr},#{renshu},#{intime},#{leavetime},#{delmark},#{ctel},#{foregift},#{days},#{account},#{leveinTypeID})
+	</insert>
+	
+	<update id="updateLivein" parameterType="Livein">
+	    UPDATE livein
+	    <set>
+	    <if test="roomID != null"> roomID=#{roomID},</if>
+	    <if test="intime != null"> intime=#{intime},</if>
+	     <if test="leavetime != null"> leavetime=#{leavetime},</if>
+	      <if test="renshu != null"> renshu=#{renshu},</if>
+	       <if test="days != null"> days=#{days},</if>
+	        <if test="account != null"> account=#{account},</if>
+	        <if test="leveinTypeID != null"> leveinTypeID=#{leveinTypeID},</if>
+	    </set>
+	    where inno = #{inno}
+	</update>
+	
+			<!-- 查询 -->
+	<select id="LiveinGet" resultType="Livein">
+	          select * from livein
+	<where>
+	   <if test="inno != null and inno !='' ">
+	      and inno=#{inno}
+	    </if>
+	</where>
+	
+	</select>
+	
+	<delete id="deleteID">
+	 DELETE FROM livein WHERE id=#{id}
+	</delete>
+</mapper>

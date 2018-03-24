@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dao.CustomerTypeMapper">
+	<!-- 使用namespace命名空间和id可以唯一的确定一个SQL语句 -->
+	
+	<!--  查询会员类型 -->
+	<select id="getType" resultType="Customertype">
+	   SELECT * FROM customertype 
+	 <where>
+	 <if test="customerID != null and customerID !='' ">
+	        and customerID=#{customerID}
+	 </if>
+	 </where>
+	</select>
+	
+	
+	
+	
+	
+</mapper>

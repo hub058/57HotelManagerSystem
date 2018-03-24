@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dao.RoomTypeMapper">
+	<!-- 使用namespace命名空间和id可以唯一的确定一个SQL语句 -->
+	<select id="getroomType" resultType="Roomtype">
+	   SELECT * FROM roomtype 
+	  <where>
+	      <if test="roomTypeID != null and roomTypeID != '' ">
+	          and  roomTypeID=#{roomTypeID}
+	      </if>
+	  </where>
+	
+    </select>
+</mapper>

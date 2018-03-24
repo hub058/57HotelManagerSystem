@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dao.EngageMapper">
+	<!-- 使用namespace命名空间和id可以唯一的确定一个SQL语句 -->
+	
+		<!-- 查询 -->
+	<select id="getEngage" resultType="Engage">
+	          select * from engage
+	<where>
+	   <if test="roomID != null and roomID !='' ">
+	      and roomID=#{roomID}
+	    </if>
+	</where>
+	
+	</select>
+	
+	<select id="getListEngage" resultType="Engage">
+	SELECT * FROM engage 
+	<where>
+	<if test="cID!=null and cID!='' ">
+     	and cID like  CONCAT('%',#{cID},'%')
+	</if>
+	<if test="ctels!=null and ctels!='' ">
+	    and ctels=#{ctels}
+	</if>
+	</where>
+	order by id DESC limit #{from},#{pageSize}
+	</select>
+	
+	<select id="engageCount" resultType="Integer">
+	    SELECT COUNT(1) FROM engage 
+	    <where>
+	   <if test="cID!=null and cID!='' ">
+     	and cID like  CONCAT('%',#{cID},'%')
+	   </if>
+	   <if test="ctels!=null and ctels!='' ">
+	    and ctels=#{ctels}
+	    </if>
+	    </where>
+	</select>
+	<delete id="deleteEngage">
+	DELETE FROM engage where roomID=#{roomID}
+	</delete>
+	
+	
+</mapper>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dao.BreakdownMapper">
+	<!-- 使用namespace命名空间和id可以唯一的确定一个SQL语句 -->
+	
+		<!-- 查询 -->
+	<select id="getBreak" resultType="Breakdown">
+	        SELECT * FROM breakdown
+	</select>
+	
+
+</mapper>

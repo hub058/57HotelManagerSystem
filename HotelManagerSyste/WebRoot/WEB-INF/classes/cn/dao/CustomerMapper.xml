@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dao.CustomerMapper">
+	<!-- 使用namespace命名空间和id可以唯一的确定一个SQL语句 -->
+	
+	<!-- 分页 查询 -->
+	<select id="customerList" resultType="Customer">
+	   SELECT * ,
+	   (SELECT ctypename FROM customertype ct WHERE ct.customerID=c.ctypeid) AS ctypename 
+	   FROM customer c
+	 <where>
+	 <if test="cID != null and cID !='' ">
+	  and cID like CONCAT('%',#{cID},'%')
+	 </if>
+	 <if test="ctel != null and ctel !='' ">
+	  and ctel=#{ctel}
+	 </if>
+	 </where>
+	 order by id ASC limit #{from},#{pageSize}
+	</select>
+	
+	
+	<!-- 总数 -->
+	<select id="countCustomer" resultType="Integer">
+	 SELECT COUNT(1) FROM Customer
+	 <where>
+	 <if test="cID != null and cID !='' ">
+	  and cID like CONCAT('%',#{cID},'%')
+	 </if>
+	 <if test="ctel != null and ctel !='' ">
+	  and ctel=#{ctel}
+	 </if>
+	 </where>
+	</select>
+	
+	
+	
+	<!-- 前台用户注册 -->
+	<insert id="UserInage"  parameterType="cn.entity.Customer">
+	INSERT INTO customer (cID,pwd,zjno,ctel)
+         VALUES	(#{cID},#{pwd},#{zjno},#{ctel})
+	</insert>
+	
+	
+	<!-- 后台用户注册 -->
+	<insert id="UserInages"  parameterType="cn.entity.Customer">
+	INSERT INTO customer (cID,pwd,zjno,ctel,jifen,csex,ctypeid,remark,cname,zjtype)
+         VALUES	(#{cID},#{pwd},#{zjno},#{ctel},#{jifen},#{csex},#{ctypeid},#{remark},#{cname},#{zjtype})
+	</insert>
+	<!-- 验证 -->
+	<select id="selectcID" resultType="Customer">
+	 SELECT * FROM Customer
+	 <where>
+	 <if test="cID != null and cID !='' ">
+	  and cID=#{cID}
+	 </if>
+	 </where>
+	</select>
+	<!-- 修改 -->
+	<update id="updatecId" parameterType="Roominfo">
+	      UPDATE customer
+	     <set>
+	       <if test="pwd !=null "> pwd = #{pwd} , </if>
+	       <if test="cname !=null "> cname = #{cname} , </if>
+	       <if test="csex !=null ">  csex= #{csex} , </if>
+	       <if test="zjno!=null "> zjno = #{zjno} , </if>
+	       <if test="ctel !=null "> ctel = #{ctel} , </if>
+	       <if test="remark !=null "> remark = #{remark} , </if>
+	        <if test="ctypeid !=null "> ctypeid = #{ctypeid} , </if>
+	         <if test="jifen !=null "> jifen = #{jifen} , </if>
+	     </set>
+	     WHERE cID = #{cID}
+	</update>
+	<!-- 删除 -->
+	<delete id="deletecID">
+	    delete from customer where cID=#{cID}
+	</delete>
+</mapper>

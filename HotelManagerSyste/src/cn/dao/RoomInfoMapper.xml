@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dao.RoomInfoMapper">
+	<!-- 使用namespace命名空间和id可以唯一的确定一个SQL语句 -->
+	<select id="getRoomList" resultType="Roominfo">
+	 select ai.id,ai.roomID, ai.roomTypeID,ai.roomState,ai.roomTel,ai.roomLoc,
+( select roomPrice from roomtype rt where rt.roomTypeID=ai.roomTypeID ) as roomPrice,
+( SELECT roomBedNum FROM roomtype rt WHERE rt.roomTypeID=ai.roomTypeID ) AS roomBedNum,
+( SELECT clroom FROM roomtype rt WHERE rt.roomTypeID=ai.roomTypeID ) AS clroom,
+( SELECT clprice FROM roomtype rt WHERE rt.roomTypeID=ai.roomTypeID ) AS clprice
+from roominfo ai
+	     <where>
+	        <if test="roomID !=null and roomID !=''">
+				and ai.roomID like CONCAT('%',#{roomID},'%')
+			</if>
+			<if test="roomState !=null ">
+				and ai.roomState = #{roomState}
+			</if>
+			<if test="roomTypeID !=null ">
+				and ai.roomTypeID = #{roomTypeID}
+			</if>
+		
+	     </where>
+	     	order by ai.id ASC limit #{from},#{pageSize} 
+	</select>
+	
+		<!-- 总数 -->
+		<select id="getCount" resultType="Integer">
+		     SELECT COUNT(1) FROM roominfo 
+		<where>
+			<if test="roomID !=null and roomID !=''">
+				and roomID like CONCAT('%',#{roomID},'%')
+			</if>
+			<if test="roomState !=null ">
+				and roomState = #{roomState}
+			</if>
+			<if test="roomTypeID !=null ">
+				and roomTypeID = #{roomTypeID}
+			</if>
+			
+		</where>
+	</select>
+	<select id="getRoomID" resultType="Roominfo">
+	         SELECT ai.id,ai.roomID, ai.roomTypeID,ai.roomState,ai.roomTel,ai.roomLoc,
+( SELECT roomPrice FROM roomtype rt WHERE rt.roomTypeID=ai.roomTypeID ) AS roomPrice,
+( SELECT roomBedNum FROM roomtype rt WHERE rt.roomTypeID=ai.roomTypeID ) AS roomBedNum,
+( SELECT clroom FROM roomtype rt WHERE rt.roomTypeID=ai.roomTypeID ) AS clroom,
+( SELECT clprice FROM roomtype rt WHERE rt.roomTypeID=ai.roomTypeID ) AS clprice
+FROM roominfo ai
+
+     <where>
+     <if test="id !=null">
+           and id=#{id}
+     </if>
+     </where>
+	
+	</select>
+	<update id="getUpdate" parameterType="Roominfo">
+	     UPDATE roominfo 
+	     <set>
+	       <if test="roomID !=null "> roomID = #{roomID} , </if>
+	       <if test="roomTypeID !=null "> roomTypeID = #{roomTypeID} , </if>
+	       <if test="roomState !=null "> roomState = #{roomState} , </if>
+	       <if test="roomTel !=null "> roomTel = #{roomTel} , </if>
+	       <if test="roomLoc !=null "> roomLoc = #{roomLoc} , </if>
+	       <if test="remark !=null "> remark = #{remark} , </if>
+	     </set>
+	     WHERE id = #{id}
+	</update>
+	<update id="getUpdates" parameterType="Roominfo">
+	     UPDATE roominfo 
+	     <set>
+	       <if test="roomState !=null "> roomState = #{roomState}</if>	     
+	     </set>
+	     WHERE roomID = #{roomID}
+	</update>
+	<delete id="deleteRoom" >
+	DELETE FROM roominfo WHERE id=#{id}
+	
+	</delete>
+   
+   <insert id="addroom"  parameterType="Roominfo">
+       insert into roominfo
+     (roomID,roomTypeID,roomState,roomTel,roomLoc,remark) 
+    values (#{roomID},#{roomTypeID},#{roomState},#{roomTel},#{roomLoc},#{remark}) 
+   </insert>
+
+   <select id="roomPric" resultType="Roominfo" >
+ SELECT roomPrice FROM roomtype r WHERE r.`roomTypeID`IN (SELECT roomTypeID FROM roominfo ro WHERE roomID=#{roomID})
+
+    </select>
+    
+    <select id="roomsList" resultType="Roominfo">
+    select id,roomID 
+    from roominfo
+    <where>
+            <if test="roomState !=null and roomState !='' ">
+				and roomState = #{roomState}
+			</if>
+			<if test="roomTypeID !=null and roomTypeID !='' ">
+				and roomTypeID = #{roomTypeID}
+			</if>
+    </where>
+    </select>
+    
+    <select id="getroominfo" resultType="Roominfo">
+        select * from roominfo
+        <where>
+        <if test="roomID !=null">
+				and roomID = #{roomID}
+			</if>
+        </where>
+    </select>
+</mapper>

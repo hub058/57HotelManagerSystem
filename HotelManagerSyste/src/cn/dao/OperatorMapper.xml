@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dao.OperatorMapper">
+	<!-- 使用namespace命名空间和id可以唯一的确定一个SQL语句 -->
+	
+		<!-- 用户登入 -->
+	<select id="Loginuser" resultType="Operator">
+	          select * from operator
+	 <trim prefix="where" prefixOverrides="and | or">
+	   <if test="userID != null and userID !='' ">
+	      and userID=#{userID}
+	    </if>
+	 </trim>
+	
+	</select>
+	
+	<update id="updateOperator" parameterType="Integer">
+	UPDATE operator 
+	<set>
+	    <if test="pwd!=null and pwd!=''">pwd=#{pwd}</if>
+	</set>
+	where userID=#{userID}
+	</update>
+</mapper>
